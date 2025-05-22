@@ -28,6 +28,13 @@ export class PokemonService {
         for (let i = 0; i < headers.length; i++) {
           pokemon[headers[i]] = values[i];
         }
+
+        // Add imageUrl with padded number (3 digits with leading zeros)
+        const pokedexNumber = pokemon['#'];
+        const paddedNumber = pokedexNumber.padStart(3, '0');
+        pokemon['imageUrl'] =
+          `https://www.pokemon.com/static-assets/content-assets/cms2/img/pokedex/full/${paddedNumber}.png`;
+
         pokemons.push(pokemon);
       }
 
@@ -57,6 +64,13 @@ export class PokemonService {
         for (let i = 0; i < headers.length; i++) {
           pokemon[headers[i]] = values[i];
         }
+
+        // Add imageUrl with padded number (3 digits with leading zeros)
+        const pokedexNumber = pokemon['#'];
+        const paddedNumber = pokedexNumber.padStart(3, '0');
+        pokemon['imageUrl'] =
+          `https://www.pokemon.com/static-assets/content-assets/cms2/img/pokedex/full/${paddedNumber}.png`;
+
         pokemons.push(pokemon);
       }
 
@@ -67,6 +81,44 @@ export class PokemonService {
           p['Type 2']?.toLowerCase() === type.toLowerCase(),
       );
 
+      return filtered;
+    } catch (error) {
+      console.error('Error reading Pokemon data:', error);
+      return [];
+    }
+  }
+
+  async findByName(name: string) {
+    try {
+      const filePath = join(__dirname, '..', 'db', 'pokemon-db.csv');
+      const fileContent = readFileSync(filePath, 'utf-8');
+
+      const lines = fileContent.split('\n');
+      const headers = lines[0].split(',').map((header) => header.trim());
+      const dataLines = lines.slice(1);
+
+      const pokemons: Record<string, string>[] = [];
+
+      for (const line of dataLines) {
+        const values = line.split(',').map((v) => v.trim());
+        const pokemon: Record<string, string> = {};
+        for (let i = 0; i < headers.length; i++) {
+          pokemon[headers[i]] = values[i];
+        }
+
+        // Add imageUrl with padded number (3 digits with leading zeros)
+        const pokedexNumber = pokemon['#'];
+        const paddedNumber = pokedexNumber.padStart(3, '0');
+        pokemon['imageUrl'] =
+          `https://www.pokemon.com/static-assets/content-assets/cms2/img/pokedex/full/${paddedNumber}.png`;
+
+        pokemons.push(pokemon);
+      }
+
+      // Filter Pokémon by name (case-insensitive)
+      const filtered = pokemons.filter((p) =>
+        p['Name']?.toLowerCase().includes(name.toLowerCase()),
+      );
       return filtered;
     } catch (error) {
       console.error('Error reading Pokemon data:', error);

@@ -34,4 +34,17 @@ export class PokemonController {
     const pokemons = await this.pokemonService.findByType(type);
     return pokemons;
   }
+
+  @Get('name')
+  async getPokemonByName(@Query('name') name: string) {
+    if (!name) {
+      return {
+        statusCode: 400,
+        message: 'Name is required',
+      };
+    }
+
+    const pokemons = await this.pokemonService.findByName(name);
+    return pokemons;
+  }
 }
